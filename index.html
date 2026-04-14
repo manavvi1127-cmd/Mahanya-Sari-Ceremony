@@ -376,7 +376,7 @@
 
   <div class="event-details">
     <div class="detail-item">
-      <span class="detail-icon">📅</span>
+      <span class="detail-icon">🗓️</span>
       <span>Sunday, April 19th, 2025</span>
     </div>
     <div class="detail-item">
@@ -394,7 +394,7 @@
   </div>
 
   <div class="btn-group">
-    <button class="btn btn-primary" onclick="scrollTo('rsvp-section')">RSVP Now</button>
+    <button class="btn btn-primary" onclick="document.getElementById('rsvp-section').scrollIntoView({behavior:'smooth', block:'start'})">RSVP Now</button>
     <button class="btn btn-outline" onclick="scrollTo('details')">View Details</button>
   </div>
 </div>
@@ -424,7 +424,7 @@
   <div class="section-title">Celebration <span>Details</span></div>
   <div class="details-grid">
     <div class="detail-card">
-      <div class="icon">📅</div>
+      <div class="icon">🗓️</div>
       <h3>Date</h3>
       <p>Sunday<br>April 19th, 2025</p>
     </div>
@@ -455,7 +455,7 @@
 
 <!-- RSVP -->
 <section id="rsvp-section" style="display:flex; flex-direction:column; align-items:center;">
-  <div class="section-label">Kindly Respond By April 14th</div>
+  <div class="section-label">Kindly Respond By April 16th</div>
   <div class="section-title">Will You <span>Join Us?</span></div>
 
   <div id="rsvp" style="width:100%">
@@ -488,7 +488,7 @@
       </div>
       <div class="form-group">
         <label>Message for Mahanya (optional)</label>
-        <textarea id="guest-message" placeholder="Write a blessing or note for the bride-to-be..."></textarea>
+        <textarea id="guest-message" placeholder="Write a blessing or note for Mahanya..."></textarea>
       </div>
       <button class="form-submit" onclick="submitRSVP()">Send My RSVP 🌸</button>
     </div>
