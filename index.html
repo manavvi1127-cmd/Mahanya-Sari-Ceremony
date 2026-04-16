@@ -464,18 +464,30 @@
   <div class="section-title">Will You <span>Join Us?</span></div>
 
   <div id="rsvp" style="width:100%">
-    <div id="rsvp-form">
+    <div data-fs-success style="display:none;">
+      <div class="success-msg" style="display:block;">
+        <div class="check">🌸</div>
+        <h3>Thank you for RSVPing!</h3>
+        <p>We've received your response and can't wait to celebrate with you.<br>See you on April 19th!</p>
+      </div>
+    </div>
+
+    <div data-fs-error style="color:var(--rose); text-align:center; margin-bottom:12px; font-size:1rem;"></div>
+
+    <form id="rsvp-form" action="https://formspree.io/f/meeveddp" method="POST">
       <div class="form-group">
         <label>Your Full Name *</label>
-        <input type="text" id="guest-name" placeholder="Enter your name" required>
+        <input type="text" name="name" placeholder="Enter your name" required data-fs-field>
+        <span data-fs-error="name" style="color:var(--rose); font-size:0.9rem;"></span>
       </div>
       <div class="form-group">
         <label>Email Address *</label>
-        <input type="email" id="guest-email" placeholder="your@email.com" required>
+        <input type="email" name="email" placeholder="your@email.com" required data-fs-field>
+        <span data-fs-error="email" style="color:var(--rose); font-size:0.9rem;"></span>
       </div>
       <div class="form-group">
         <label>Number of Guests Attending</label>
-        <select id="guest-count">
+        <select name="guests" data-fs-field>
           <option value="1">Just me (1)</option>
           <option value="2">2 guests</option>
           <option value="3">3 guests</option>
@@ -485,24 +497,18 @@
       </div>
       <div class="form-group">
         <label>Attending?</label>
-        <select id="attending">
-          <option value="yes">Yes, I'll be there! 🎉</option>
-          <option value="maybe">Maybe</option>
-          <option value="no">Sorry, I can't make it</option>
+        <select name="attending" data-fs-field>
+          <option value="Yes, I'll be there!">Yes, I'll be there! 🎉</option>
+          <option value="Maybe">Maybe</option>
+          <option value="Sorry, I can't make it">Sorry, I can't make it</option>
         </select>
       </div>
       <div class="form-group">
         <label>Message for Mahanya (optional)</label>
-        <textarea id="guest-message" placeholder="Write a blessing or note for Mahanya..."></textarea>
+        <textarea name="message" placeholder="Write a blessing or note for Mahanya..." data-fs-field></textarea>
       </div>
-      <button class="form-submit" onclick="submitRSVP()">Send My RSVP 🌸</button>
-    </div>
-
-    <div class="success-msg" id="success-msg">
-      <div class="check">🌸</div>
-      <h3>Thank you for RSVPing!</h3>
-      <p>We've received your response and can't wait to celebrate with you.<br>See you on April 19th!</p>
-    </div>
+      <button type="submit" class="form-submit" data-fs-submit-btn>Send My RSVP 🌸</button>
+    </form>
   </div>
 </section>
 
@@ -517,36 +523,9 @@
     </div>
   </div>
 
-  <div id="admin-panel">
-    <h2>🌸 Guest List — Mahanya's Half Sari</h2>
-    <p style="color:var(--mauve); margin-bottom:4px;">Live RSVP tracker</p>
-    <div class="admin-stats">
-      <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total RSVPs</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-yes">0</div><div class="stat-label">Attending</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-no">0</div><div class="stat-label">Not Attending</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-maybe">0</div><div class="stat-label">Maybe</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-guests">0</div><div class="stat-label">Total Guests</div></div>
-    </div>
-    <div style="overflow-x:auto;">
-      <table id="rsvp-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Guests</th>
-            <th>Attending</th>
-            <th>Message</th>
-            <th>Submitted</th>
-          </tr>
-        </thead>
-        <tbody id="rsvp-tbody"></tbody>
-      </table>
-    </div>
-    <p id="no-rsvps" style="text-align:center; color:var(--mauve); padding:30px; display:none;">No RSVPs yet — share the invite!</p>
-    <div style="margin-top:20px; text-align:right;">
-      <button class="btn btn-outline" onclick="exportCSV()" style="font-size:0.9rem; padding:10px 24px;">Export CSV</button>
-    </div>
+  <div id="admin-panel" style="display:none;">
+    <h2>🌸 Viewing RSVPs</h2>
+    <p style="color:var(--mauve); margin-top:8px;">Redirecting you to your Formspree dashboard where all RSVPs are stored...</p>
   </div>
 </div>
 
@@ -570,40 +549,9 @@
     document.querySelector('.hero').appendChild(p);
   }
 
-  // ── SCROLL ──
-  function scrollTo(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ── STORAGE KEY ──
-  const STORE_KEY = 'mahanya_rsvps_2026';
-
-  function getRSVPs() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
-    catch { return []; }
-  }
-  function saveRSVPs(list) {
-    localStorage.setItem(STORE_KEY, JSON.stringify(list));
-  }
-
-  // ── RSVP SUBMIT ──
-  function submitRSVP() {
-    const name    = document.getElementById('guest-name').value.trim();
-    const email   = document.getElementById('guest-email').value.trim();
-    const count   = document.getElementById('guest-count').value;
-    const attend  = document.getElementById('attending').value;
-    const msg     = document.getElementById('guest-message').value.trim();
-
-    if (!name || !email) { alert('Please fill in your name and email.'); return; }
-    if (!/\S+@\S+\.\S+/.test(email)) { alert('Please enter a valid email.'); return; }
-
-    const rsvps = getRSVPs();
-    rsvps.push({ name, email, count, attend, msg, time: new Date().toLocaleString() });
-    saveRSVPs(rsvps);
-
-    document.getElementById('rsvp-form').style.display = 'none';
-    document.getElementById('success-msg').style.display = 'block';
-  }
+  // ── FORMSPREE INIT ──
+  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+  formspree('initForm', { formElement: '#rsvp-form', formId: 'meeveddp' });
 
   // ── ADMIN ──
   const ADMIN_PASS = 'Mahanya2026';
@@ -612,72 +560,20 @@
     const box = document.getElementById('admin-login-box');
     box.style.display = box.style.display === 'none' ? 'block' : 'none';
     document.getElementById('admin-pass').focus();
-    scrollTo('admin-section');
+    document.getElementById('admin-section').scrollIntoView({ behavior: 'smooth' });
   }
 
   function checkAdmin() {
     const pass = document.getElementById('admin-pass').value;
     if (pass === ADMIN_PASS) {
       document.getElementById('admin-login-box').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      loadAdminTable();
+      window.open('https://formspree.io/forms/meeveddp/submissions', '_blank');
     } else {
       document.getElementById('wrong-pass').style.display = 'block';
     }
   }
-
-  function loadAdminTable() {
-    const rsvps = getRSVPs();
-    const tbody = document.getElementById('rsvp-tbody');
-    tbody.innerHTML = '';
-
-    let yes=0, no=0, maybe=0, totalGuests=0;
-
-    if (rsvps.length === 0) {
-      document.getElementById('no-rsvps').style.display = 'block';
-    } else {
-      document.getElementById('no-rsvps').style.display = 'none';
-      rsvps.forEach((r, i) => {
-        if (r.attend === 'yes') yes++;
-        else if (r.attend === 'no') no++;
-        else maybe++;
-        if (r.attend === 'yes' || r.attend === 'maybe') totalGuests += parseInt(r.count);
-
-        const badgeClass = r.attend === 'yes' ? 'badge-yes' : r.attend === 'no' ? 'badge-no' : 'badge-maybe';
-        const badgeText = r.attend === 'yes' ? 'Attending ✓' : r.attend === 'no' ? 'Not Attending' : 'Maybe';
-        tbody.innerHTML += `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${r.name}</strong></td>
-            <td>${r.email}</td>
-            <td>${r.count}</td>
-            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-            <td style="max-width:200px; white-space:pre-wrap;">${r.msg || '—'}</td>
-            <td style="font-size:0.82rem; color:#888;">${r.time}</td>
-          </tr>`;
-      });
-    }
-
-    document.getElementById('stat-total').textContent = rsvps.length;
-    document.getElementById('stat-yes').textContent = yes;
-    document.getElementById('stat-no').textContent = no;
-    document.getElementById('stat-maybe').textContent = maybe;
-    document.getElementById('stat-guests').textContent = totalGuests;
-  }
-
-  // ── EXPORT CSV ──
-  function exportCSV() {
-    const rsvps = getRSVPs();
-    if (!rsvps.length) { alert('No RSVPs to export yet.'); return; }
-    const header = ['Name','Email','Guests','Attending','Message','Submitted'];
-    const rows = rsvps.map(r => [r.name, r.email, r.count, r.attend, r.msg || '', r.time].map(v => `"${v}"`).join(','));
-    const csv = [header.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'mahanya_rsvp_list.csv';
-    a.click();
-  }
 </script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 </body>
 </html>
+
